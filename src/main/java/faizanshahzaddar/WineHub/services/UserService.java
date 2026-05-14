@@ -104,7 +104,7 @@ public class UserService {
 
     public Page<User> findAll(int page, int size, String sortBy) {
         if (size > 10 || size < 0) size = 10;
-        if (page < 10) page = 0;
+        if (page < 0) page = 0;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.userRepository.findAll(pageable);
     }

@@ -1,6 +1,7 @@
 package faizanshahzaddar.WineHub.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import faizanshahzaddar.WineHub.enums.WineCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-
+@JsonIgnoreProperties({"accountNonExpired", "accountNonLocked", "authorities", "credentialsNonExpired", "enabled"})
 public class Wine {
 
     @Id

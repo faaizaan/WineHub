@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface WIneRepository extends JpaRepository<Wine,UUID> {
+public interface WineRepository extends JpaRepository<Wine,UUID> {
 }
