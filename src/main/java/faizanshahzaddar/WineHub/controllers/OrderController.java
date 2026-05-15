@@ -81,4 +81,12 @@ public class OrderController {
     public void delete(@PathVariable UUID orderId) {
         this.orderService.findByIdAndDelete(orderId);
     }
+
+    @GetMapping("/me")
+    public Page<Order> getMyOrders(@AuthenticationPrincipal User currentAuthenticatedUser,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size,
+                                   @RequestParam(defaultValue = "orderDate") String sortBy) {
+        return this.orderService.findMyOrders(currentAuthenticatedUser, page, size, sortBy);
+    }
 }

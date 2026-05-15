@@ -65,4 +65,12 @@ public class OrderService {
         Order found = this.findById(orderId);
         this.orderRepository.delete(found);
     }
+
+    public Page<Order> findMyOrders(User currentUser, int page, int size, String sortBy) {
+        if (size > 10 || size <= 0) size = 10;
+        if (page < 0) page = 0;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.orderRepository.findByUser(currentUser, pageable);
+    }
 }

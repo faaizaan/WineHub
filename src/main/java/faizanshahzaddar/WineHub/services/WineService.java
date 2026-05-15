@@ -3,6 +3,7 @@ package faizanshahzaddar.WineHub.services;
 import faizanshahzaddar.WineHub.entities.User;
 import faizanshahzaddar.WineHub.entities.Wine;
 import faizanshahzaddar.WineHub.enums.Role;
+import faizanshahzaddar.WineHub.exceptions.BadRequestException;
 import faizanshahzaddar.WineHub.exceptions.NotFoundException;
 import faizanshahzaddar.WineHub.exceptions.UnauthorizedException;
 import faizanshahzaddar.WineHub.payloads.WineDTO;
@@ -26,6 +27,10 @@ public class WineService {
     }
 
     public Wine save(WineDTO body, User currentUser){
+
+        if (wineRepository.existsByNameAndUser(body.name().trim(), currentUser)) {
+            throw new BadRequestException("Hai già inserito un vino con questo nome");
+        }
 
         if (currentUser.getRole() != Role.SELLER && currentUser.getRole() != Role.ADMIN)
             throw new UnauthorizedException("Diventa un rivenditore per vendere i tuoi vini");
@@ -67,6 +72,12 @@ public class WineService {
 
         if (!isAdmin && !isOwner) {
             throw new UnauthorizedException("Non puoi modificare un vino del quale non sei proprietario");
+        }
+
+        if (!found.getName().equalsIgnoreCase(body.name().trim())){
+            if (wineRepository.existsByNameAndUser(body.name().trim(), currentUser)) {
+                throw new BadRequestException("Hai già inserito un vino con questo nome");
+            }
         }
 
         found.setName(body.name().trim());
