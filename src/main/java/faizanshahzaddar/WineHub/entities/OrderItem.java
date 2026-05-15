@@ -1,6 +1,7 @@
 package faizanshahzaddar.WineHub.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "order_id")
+    @JsonIgnore
     private Order order;
 
     @ManyToOne
