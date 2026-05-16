@@ -3,6 +3,7 @@ package faizanshahzaddar.WineHub.services;
 import faizanshahzaddar.WineHub.entities.User;
 import faizanshahzaddar.WineHub.entities.Wine;
 import faizanshahzaddar.WineHub.enums.Role;
+import faizanshahzaddar.WineHub.exceptions.AccessDeniedException;
 import faizanshahzaddar.WineHub.exceptions.BadRequestException;
 import faizanshahzaddar.WineHub.exceptions.NotFoundException;
 import faizanshahzaddar.WineHub.exceptions.UnauthorizedException;
@@ -58,7 +59,7 @@ public class WineService {
         boolean isOwner = found.getUser().getId().equals(currentUser.getId());
 
         if (!isAdmin && !isOwner) {
-            throw new UnauthorizedException("Non puoi eliminare un vino del quale non sei proprietario");
+            throw new AccessDeniedException("Non puoi eliminare un vino del quale non sei proprietario");
         }
 
         this.wineRepository.delete(found);
@@ -71,7 +72,7 @@ public class WineService {
         boolean isOwner = found.getUser().getId().equals(currentUser.getId());
 
         if (!isAdmin && !isOwner) {
-            throw new UnauthorizedException("Non puoi modificare un vino del quale non sei proprietario");
+            throw new AccessDeniedException("Non puoi modificare un vino del quale non sei proprietario");
         }
 
         if (!found.getName().equalsIgnoreCase(body.name().trim())){
