@@ -60,7 +60,7 @@ public class FavoriteController {
 
     @DeleteMapping("/{favoriteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID favoriteId) {
-        this.favoriteService.findByIdAndDelete(favoriteId);
+    public void delete(@PathVariable UUID favoriteId,@AuthenticationPrincipal User currentAuthenticatedUser) {
+        this.favoriteService.findByIdAndDelete(favoriteId,currentAuthenticatedUser);
     }
 }
