@@ -1,5 +1,7 @@
 package faizanshahzaddar.WineHub.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import faizanshahzaddar.WineHub.entities.User;
 import faizanshahzaddar.WineHub.entities.Wine;
 import faizanshahzaddar.WineHub.enums.Role;
@@ -15,16 +17,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class WineService {
     private final WineRepository wineRepository;
+    private final Cloudinary cloudinaryUploader;
 
-    public WineService(WineRepository wineRepository) {
+    public WineService(WineRepository wineRepository, Cloudinary cloudinaryUploader) {
         this.wineRepository = wineRepository;
+        this.cloudinaryUploader = cloudinaryUploader;
     }
 
     public Wine save(WineDTO body, User currentUser){
@@ -94,5 +101,31 @@ public class WineService {
         log.info("Il vino " + updateWine.getId() + " è stato aggiornato correttamente");
 
         return updateWine;
+    }
+
+    public Wine imageUpload(MultipartFile file, UUID wineId, User currentUser) {
+
+        Wine found = this.findById(wineId);
+
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean isOwner = found.getUser().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isOwner) {
+            throw new AccessDeniedException("Non puoi modificare un vino del quale non sei proprietario");
+        }
+
+        try {
+            Map result = cloudinaryUploader.uploader()
+                    .upload(file.getBytes(), ObjectUtils.emptyMap());
+
+            String url = (String) result.get("secure_url");
+
+            found.setImageUrl(url);
+
+            return this.wineRepository.save(found);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Errore upload immagine", e);
+        }
     }
 }

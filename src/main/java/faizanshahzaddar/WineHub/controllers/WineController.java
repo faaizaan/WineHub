@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -96,6 +97,25 @@ public class WineController {
     public void delete(@PathVariable UUID wineId,
                        @AuthenticationPrincipal User currentAuthenticatedUser) {
         this.wineService.findByIdAndDelete(wineId, currentAuthenticatedUser);
+    }
+
+    @PatchMapping("/{wineId}/image")
+    public WineRespDTO uploadWineImage(@PathVariable UUID wineId,
+                                       @RequestParam("image") MultipartFile file,
+                                       @AuthenticationPrincipal User currentAuthenticatedUser) {
+
+        Wine updatedWine = this.wineService.imageUpload(file, wineId, currentAuthenticatedUser);
+
+        return new WineRespDTO(
+                updatedWine.getId(),
+                updatedWine.getName(),
+                updatedWine.getDescription(),
+                updatedWine.getPrice(),
+                updatedWine.getWineCategory(),
+                updatedWine.getImageUrl(),
+                updatedWine.getUser().getId(),
+                updatedWine.getUser().getUsername()
+        );
     }
 
 }
