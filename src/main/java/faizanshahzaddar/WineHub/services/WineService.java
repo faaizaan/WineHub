@@ -128,4 +128,12 @@ public class WineService {
             throw new RuntimeException("Errore upload immagine", e);
         }
     }
+
+    public Page<Wine> findMyWines(User currentUser, int page, int size, String sortBy){
+        if (size > 10 || size <= 0) size = 10;
+        if (page < 0) page = 0;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.wineRepository.findByUser(currentUser, pageable);
+    }
 }

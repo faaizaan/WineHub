@@ -51,7 +51,8 @@ public class OrderController {
                         item.getQuantity(),
                         item.getPriceAtPurchase(),
                         item.getWine().getId(),
-                        item.getWine().getName()
+                        item.getWine().getName(),
+                        item.getWine().getImageUrl()
                 ))
                 .toList();
 
@@ -65,15 +66,76 @@ public class OrderController {
     }
 
     @GetMapping
-    public Page<Order> getOrders(@RequestParam(defaultValue = "0") int page,
+    public Page<OrderRespDTO> getOrders(@RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(defaultValue = "orderDate") String sortBy) {
-        return this.orderService.findAll(page, size, sortBy);
+        return this.orderService.findAll(page, size, sortBy)
+                .map(order -> new OrderRespDTO(
+                        order.getId(),
+                        order.getOrderDate(),
+                        order.getUser().getId(),
+                        order.getUser().getUsername(),
+                        order.getItems().stream()
+                                .map(item -> new OrderItemRespDTO(
+                                        item.getId(),
+                                        item.getQuantity(),
+                                        item.getPriceAtPurchase(),
+                                        item.getWine().getId(),
+                                        item.getWine().getName(),
+                                        item.getWine().getImageUrl()
+                                ))
+                                .toList()
+                ));
     }
 
+
+    @GetMapping("/me")
+    public Page<OrderRespDTO> getMyOrders(@AuthenticationPrincipal User currentAuthenticatedUser,
+                                          @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(defaultValue = "orderDate") String sortBy) {
+        return this.orderService.findMyOrders(currentAuthenticatedUser, page, size, sortBy)
+                .map(order -> new OrderRespDTO(
+                        order.getId(),
+                        order.getOrderDate(),
+                        order.getUser().getId(),
+                        order.getUser().getUsername(),
+                        order.getItems().stream()
+                                .map(item -> new OrderItemRespDTO(
+                                        item.getId(),
+                                        item.getQuantity(),
+                                        item.getPriceAtPurchase(),
+                                        item.getWine().getId(),
+                                        item.getWine().getName(),
+                                        item.getWine().getImageUrl()
+                                ))
+                                .toList()
+                ));
+    }
     @GetMapping("/{orderId}")
-    public Order getById(@PathVariable UUID orderId) {
-        return this.orderService.findById(orderId);
+    public OrderRespDTO getById(@PathVariable UUID orderId) {
+        Order order = this.orderService.findById(orderId);
+
+        List<OrderItemRespDTO> items = order.getItems()
+                .stream()
+                .map(item -> new OrderItemRespDTO(
+                        item.getId(),
+                        item.getQuantity(),
+                        item.getPriceAtPurchase(),
+                        item.getWine().getId(),
+                        item.getWine().getName(),
+                        item.getWine().getImageUrl()
+                ))
+                .toList();
+
+        return new OrderRespDTO(
+                order.getId(),
+                order.getOrderDate(),
+                order.getUser().getId(),
+                order.getUser().getUsername(),
+                items
+        );
+
     }
 
     @DeleteMapping("/{orderId}")
@@ -82,11 +144,5 @@ public class OrderController {
         this.orderService.findByIdAndDelete(orderId);
     }
 
-    @GetMapping("/me")
-    public Page<Order> getMyOrders(@AuthenticationPrincipal User currentAuthenticatedUser,
-                                   @RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "10") int size,
-                                   @RequestParam(defaultValue = "orderDate") String sortBy) {
-        return this.orderService.findMyOrders(currentAuthenticatedUser, page, size, sortBy);
-    }
+
 }

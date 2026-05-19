@@ -7,6 +7,7 @@ import faizanshahzaddar.WineHub.payloads.FavoriteDTO;
 import faizanshahzaddar.WineHub.payloads.FavoriteRespDTO;
 import faizanshahzaddar.WineHub.services.FavoriteService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -53,9 +54,36 @@ public class FavoriteController {
         );
     }
 
+    @GetMapping("/me")
+    public Page<FavoriteRespDTO> getMyFavorites(@AuthenticationPrincipal User currentAuthenticatedUser,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size,
+                                                @RequestParam(defaultValue = "id") String sortBy) {
+        return this.favoriteService.findMyFavorites(currentAuthenticatedUser, page, size, sortBy)
+                .map(favorite -> new FavoriteRespDTO(
+                        favorite.getId(),
+                        favorite.getUser().getId(),
+                        favorite.getUser().getUsername(),
+                        favorite.getWine().getId(),
+                        favorite.getWine().getName(),
+                        favorite.getWine().getImageUrl(),
+                        favorite.getWine().getPrice()
+                ));
+    }
+
     @GetMapping("/{favoriteId}")
-    public Favorite getById(@PathVariable UUID favoriteId) {
-        return this.favoriteService.findById(favoriteId);
+    public FavoriteRespDTO getById(@PathVariable UUID favoriteId) {
+        Favorite favorite = this.favoriteService.findById(favoriteId);
+
+        return new FavoriteRespDTO(
+                favorite.getId(),
+                favorite.getUser().getId(),
+                favorite.getUser().getUsername(),
+                favorite.getWine().getId(),
+                favorite.getWine().getName(),
+                favorite.getWine().getImageUrl(),
+                favorite.getWine().getPrice()
+        );
     }
 
     @DeleteMapping("/{favoriteId}")

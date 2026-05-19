@@ -8,6 +8,7 @@ public record OrderItemRespDTO(
         int quantity,
         double priceAtPurchase,
         UUID wineId,
-        String wineName
+        String wineName,
+        String wineImageUrl
 ) {
 }

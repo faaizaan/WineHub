@@ -55,15 +55,55 @@ public class WineController {
     }
 
     @GetMapping
-    public Page<Wine> getWines(@RequestParam(defaultValue = "0") int page,
+    public Page<WineRespDTO> getWines(@RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "10") int size,
                                @RequestParam(defaultValue = "name") String sortBy) {
-        return this.wineService.findAll(page, size, sortBy);
+        return this.wineService.findAll(page, size, sortBy)
+                .map(wine -> new WineRespDTO(
+                        wine.getId(),
+                        wine.getName(),
+                        wine.getDescription(),
+                        wine.getPrice(),
+                        wine.getWineCategory(),
+                        wine.getImageUrl(),
+                        wine.getUser().getId(),
+                        wine.getUser().getUsername()
+                ));
+    }
+
+
+    @GetMapping("/me")
+    public Page<WineRespDTO> getMyWines(@AuthenticationPrincipal User currentAuthenticatedUser,
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "10") int size,
+                                 @RequestParam(defaultValue = "name") String sortBy) {
+        return this.wineService.findMyWines(currentAuthenticatedUser, page, size, sortBy)
+                .map(wine -> new WineRespDTO(
+                        wine.getId(),
+                        wine.getName(),
+                        wine.getDescription(),
+                        wine.getPrice(),
+                        wine.getWineCategory(),
+                        wine.getImageUrl(),
+                        wine.getUser().getId(),
+                        wine.getUser().getUsername()
+                ));
     }
 
     @GetMapping("/{wineId}")
-    public Wine getById(@PathVariable UUID wineId) {
-        return this.wineService.findById(wineId);
+    public WineRespDTO  getById(@PathVariable UUID wineId) {
+        Wine wine = this.wineService.findById(wineId);
+
+        return new WineRespDTO(
+                wine.getId(),
+                wine.getName(),
+                wine.getDescription(),
+                wine.getPrice(),
+                wine.getWineCategory(),
+                wine.getImageUrl(),
+                wine.getUser().getId(),
+                wine.getUser().getUsername()
+        );
     }
     @PutMapping("/{wineId}")
     public WineRespDTO update(@PathVariable UUID wineId,

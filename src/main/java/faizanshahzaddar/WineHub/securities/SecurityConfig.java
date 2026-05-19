@@ -40,6 +40,7 @@ public class SecurityConfig {
         //cosi tutte le richhieste chiedono il token tranne queste
         httpSecurity.authorizeHttpRequests(req -> req
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/wines/me").authenticated()
                 .requestMatchers(HttpMethod.GET, "/wines/**").permitAll()
                 .anyRequest().authenticated()
         );
@@ -47,11 +48,6 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
         httpSecurity.cors(Customizer.withDefaults());
         return httpSecurity.build();
-    }
-
-    @Bean
-    public PasswordEncoder getBCrypt() {
-        return new BCryptPasswordEncoder(12);
     }
 
     @Bean
