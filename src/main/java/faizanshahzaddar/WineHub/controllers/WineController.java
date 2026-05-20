@@ -2,6 +2,7 @@ package faizanshahzaddar.WineHub.controllers;
 
 import faizanshahzaddar.WineHub.entities.User;
 import faizanshahzaddar.WineHub.entities.Wine;
+import faizanshahzaddar.WineHub.enums.WineCategory;
 import faizanshahzaddar.WineHub.exceptions.ValidationException;
 import faizanshahzaddar.WineHub.payloads.WineDTO;
 import faizanshahzaddar.WineHub.payloads.WineRespDTO;
@@ -59,6 +60,24 @@ public class WineController {
                                @RequestParam(defaultValue = "10") int size,
                                @RequestParam(defaultValue = "name") String sortBy) {
         return this.wineService.findAll(page, size, sortBy)
+                .map(wine -> new WineRespDTO(
+                        wine.getId(),
+                        wine.getName(),
+                        wine.getDescription(),
+                        wine.getPrice(),
+                        wine.getWineCategory(),
+                        wine.getImageUrl(),
+                        wine.getUser().getId(),
+                        wine.getUser().getUsername()
+                ));
+    }
+
+    @GetMapping("/category/{wineCategory}")
+    public Page<WineRespDTO> getWinesByCategory(@PathVariable WineCategory wineCategory,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size,
+                                                @RequestParam(defaultValue = "name") String sortBy) {
+        return this.wineService.findByCategory(wineCategory, page, size, sortBy)
                 .map(wine -> new WineRespDTO(
                         wine.getId(),
                         wine.getName(),

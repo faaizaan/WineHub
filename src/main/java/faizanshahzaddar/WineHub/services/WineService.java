@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import faizanshahzaddar.WineHub.entities.User;
 import faizanshahzaddar.WineHub.entities.Wine;
 import faizanshahzaddar.WineHub.enums.Role;
+import faizanshahzaddar.WineHub.enums.WineCategory;
 import faizanshahzaddar.WineHub.exceptions.AccessDeniedException;
 import faizanshahzaddar.WineHub.exceptions.BadRequestException;
 import faizanshahzaddar.WineHub.exceptions.NotFoundException;
@@ -135,5 +136,13 @@ public class WineService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.wineRepository.findByUser(currentUser, pageable);
+    }
+
+    public Page<Wine> findByCategory(WineCategory wineCategory, int page, int size, String sortBy) {
+        if (size > 10 || size <= 0) size = 10;
+        if (page < 0) page = 0;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.wineRepository.findByWineCategory(wineCategory, pageable);
     }
 }
