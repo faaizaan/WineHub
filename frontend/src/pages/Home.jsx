@@ -1,5 +1,3 @@
-import MyNavbar from "../components/MyNavbar";
-
 function Home() {
   return <></>;
 }
