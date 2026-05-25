@@ -10,6 +10,7 @@ import Favorites from "./pages/Favorites";
 import Orders from "./pages/Orders";
 import MyWines from "./pages/MyWines";
 import CreateWine from "./pages/CreateWine";
+import WineDetails from "./pages/WineDetails";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/my-wines" element={<MyWines />} />
         <Route path="/create-wine" element={<CreateWine />} />
+        <Route path="/wines/:wineId" element={<WineDetails />} />
       </Routes>
     </>
   );

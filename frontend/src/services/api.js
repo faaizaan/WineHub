@@ -15,7 +15,7 @@ export const fetchWines = async () => {
   try {
     const res = await fetch(`${url}/wines`);
     if (!res.ok) throw new Error("Errore nel caricamento dei vini");
-    return await res.json;
+    return await res.json();
   } catch (err) {
     console.log("Errore -> " + err);
     return null;
@@ -29,9 +29,24 @@ export const fetchMyWines = async () => {
     });
 
     if (!res.ok) throw new Error("Errore nel caricamento dei tuoi vini");
-    return await res.json;
+    return await res.json();
   } catch (err) {
     console.log("Errore -> " + err);
+    return null;
+  }
+};
+
+export const fetchWineById = async (wineId) => {
+  try {
+    const res = await fetch(`${url}/wines/${wineId}`);
+
+    if (!res.ok) {
+      throw new Error("Errore nel caricamento del vino");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log("Errore:", err);
     return null;
   }
 };
@@ -44,7 +59,7 @@ export const createWine = async (newWine) => {
       body: JSON.stringify(newWine),
     });
     if (!res.ok) throw new Error("Errore la creazione del vino");
-    return await res.json;
+    return await res.json();
   } catch (err) {
     console.log("Errore -> " + err);
     return null;
@@ -59,7 +74,7 @@ export const updateWine = async (WineId, wine) => {
       body: JSON.stringify(wine),
     });
     if (!res.ok) throw new Error("Errore la creazione del vino");
-    return await res.json;
+    return await res.json();
   } catch (err) {
     console.log("Errore -> " + err);
     return null;
@@ -102,6 +117,27 @@ export const uploadWineImage = async (wineId, file) => {
     return await res.json();
   } catch (err) {
     console.log("Errore -> " + err);
+    return null;
+  }
+};
+
+export const addFavorite = async (wineId) => {
+  try {
+    const res = await fetch(`${url}/favorites`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        wineId: wineId,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore aggiunta preferito");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log(err);
     return null;
   }
 };
