@@ -121,6 +121,23 @@ export const uploadWineImage = async (wineId, file) => {
   }
 };
 
+export const fetchMyFavorites = async () => {
+  try {
+    const res = await fetch(`${url}/favorites/me`, {
+      headers: getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore nel caricamento dei preferiti");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log("Errore:", err);
+    return null;
+  }
+};
+
 export const addFavorite = async (wineId) => {
   try {
     const res = await fetch(`${url}/favorites`, {
@@ -139,5 +156,24 @@ export const addFavorite = async (wineId) => {
   } catch (err) {
     console.log(err);
     return null;
+  }
+};
+export const deleteFavorite = async (favoriteId) => {
+  try {
+    const res = await fetch(`${url}/favorites/${favoriteId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore eliminazione preferito");
+    }
+
+    return true;
+  } catch (err) {
+    console.log("Errore:", err);
+    return false;
   }
 };

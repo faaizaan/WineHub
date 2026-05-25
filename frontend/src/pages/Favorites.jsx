@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
-import { addFavorite } from "../services/api";
+import { fetchMyFavorites } from "../services/api";
+import { deleteFavorite } from "../services/api";
 
 function Favorites() {
   const [favorites, setFavorites] = useState([]);
@@ -8,7 +9,7 @@ function Favorites() {
 
   useEffect(() => {
     const loadFavorites = async () => {
-      const data = await addFavorite();
+      const data = await fetchMyFavorites();
 
       if (data) {
         setFavorites(data.content);
@@ -35,6 +36,21 @@ function Favorites() {
               <Card.Body>
                 <Card.Title>{favorite.wineName}</Card.Title>
                 <p>{favorite.price} €</p>
+                <button
+                  className="btn btn-danger"
+                  onClick={async () => {
+                    const ok = await deleteFavorite(favorite.favoriteId);
+
+                    if (ok) {
+                      setFavorites(
+                        favorites.filter(
+                          (f) => f.favoriteId !== favorite.favoriteId,
+                        ),
+                      );
+                    }
+                  }}>
+                  Rimuovi
+                </button>
               </Card.Body>
             </Card>
           </Col>
