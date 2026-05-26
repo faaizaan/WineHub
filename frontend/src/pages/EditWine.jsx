@@ -1,21 +1,41 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container, Form, Button } from "react-bootstrap";
-import { createWine, uploadWineImage } from "../services/api";
+import { fetchWineById, updateWine, uploadWineImage } from "../services/api";
 
-function CreateWine() {
+function EditWine() {
+  const { wineId } = useParams();
+
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [wineCategory, setWineCategory] = useState("RED");
-  const [error, setError] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadWine = async () => {
+      const data = await fetchWineById(wineId);
+
+      if (data) {
+        setName(data.name);
+        setDescription(data.description);
+        setPrice(data.price);
+        setWineCategory(data.wineCategory);
+      } else {
+        setError("Errore caricamento vino");
+      }
+    };
+
+    loadWine();
+  }, [wineId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newWine = {
+    const updatedWine = {
       name,
       description,
       price: Number(price),
@@ -23,29 +43,31 @@ function CreateWine() {
       imageUrl: "https://placehold.co/600x400",
     };
 
-    const createdWine = await createWine(newWine);
-    if (!createdWine) {
-      setError("Errore durante la creazione del vino");
+    const result = await updateWine(wineId, updatedWine);
+
+    if (!result) {
+      setError("Errore modifica vino");
       return;
     }
 
     if (imageFile) {
-      await uploadWineImage(createdWine.id, imageFile);
+      await uploadWineImage(wineId, imageFile);
     }
 
-    alert("Vino creato");
+    alert("Vino modificato");
     navigate("/my-wines");
   };
 
   return (
     <Container className="mt-4" style={{ maxWidth: "600px" }}>
-      <h1>Crea vino</h1>
+      <h1>Modifica vino</h1>
 
       {error && <p className="text-danger">{error}</p>}
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Nome vino</Form.Label>
+
           <Form.Control
             type="text"
             value={name}
@@ -56,6 +78,7 @@ function CreateWine() {
 
         <Form.Group className="mb-3">
           <Form.Label>Descrizione</Form.Label>
+
           <Form.Control
             as="textarea"
             rows={4}
@@ -67,6 +90,7 @@ function CreateWine() {
 
         <Form.Group className="mb-3">
           <Form.Label>Prezzo</Form.Label>
+
           <Form.Control
             type="number"
             step="0.01"
@@ -78,6 +102,7 @@ function CreateWine() {
 
         <Form.Group className="mb-3">
           <Form.Label>Categoria</Form.Label>
+
           <Form.Select
             value={wineCategory}
             onChange={(e) => setWineCategory(e.target.value)}>
@@ -89,7 +114,7 @@ function CreateWine() {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Immagine vino</Form.Label>
+          <Form.Label>Nuova immagine</Form.Label>
 
           <Form.Control
             type="file"
@@ -97,10 +122,10 @@ function CreateWine() {
           />
         </Form.Group>
 
-        <Button type="submit">Crea vino</Button>
+        <Button type="submit">Salva modifiche</Button>
       </Form>
     </Container>
   );
 }
 
-export default CreateWine;
+export default EditWine;

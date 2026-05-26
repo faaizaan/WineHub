@@ -1,6 +1,10 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+
 import MyNavbar from "./components/MyNavbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import SellerRoute from "./components/SellerRoute";
+
 import Home from "./pages/Home";
 import Wines from "./pages/Wines";
 import Login from "./pages/Login";
@@ -11,6 +15,7 @@ import Orders from "./pages/Orders";
 import MyWines from "./pages/MyWines";
 import CreateWine from "./pages/CreateWine";
 import WineDetails from "./pages/WineDetails";
+import EditWine from "./pages/EditWine";
 
 function App() {
   return (
@@ -20,14 +25,69 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/wines" element={<Wines />} />
+        <Route path="/wines/:wineId" element={<WineDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/my-wines" element={<MyWines />} />
-        <Route path="/create-wine" element={<CreateWine />} />
-        <Route path="/wines/:wineId" element={<WineDetails />} />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <Favorites />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-wines"
+          element={
+            <ProtectedRoute>
+              <SellerRoute>
+                <MyWines />
+              </SellerRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/create-wine"
+          element={
+            <ProtectedRoute>
+              <SellerRoute>
+                <CreateWine />
+              </SellerRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-wine/:wineId"
+          element={
+            <ProtectedRoute>
+              <SellerRoute>
+                <EditWine />
+              </SellerRoute>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

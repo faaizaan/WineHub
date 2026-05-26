@@ -24,7 +24,7 @@ export const fetchWines = async () => {
 
 export const fetchMyWines = async () => {
   try {
-    const res = await fetch(`$(url)/wines/me`, {
+    const res = await fetch(`${url}/wines/me`, {
       headers: getAuthHeaders(),
     });
 
@@ -53,34 +53,29 @@ export const fetchWineById = async (wineId) => {
 
 export const createWine = async (newWine) => {
   try {
-    const res = await fetch(`$(url)/wines`, {
+    const res = await fetch(`${url}/wines`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(newWine),
     });
-    if (!res.ok) throw new Error("Errore la creazione del vino");
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.log("ERRORE BACKEND:", errorData);
+      console.log("ERRORI VALIDAZIONE:", errorData.errors);
+      throw new Error(
+        errorData.errors?.join(", ") ||
+          errorData.message ||
+          "Errore creazione vino",
+      );
+    }
+
     return await res.json();
   } catch (err) {
     console.log("Errore -> " + err);
     return null;
   }
 };
-
-export const updateWine = async (WineId, wine) => {
-  try {
-    const res = await fetch(`$(url)/wines/$(wineId)`, {
-      methos: "PUT",
-      headers: getAuthHeaders,
-      body: JSON.stringify(wine),
-    });
-    if (!res.ok) throw new Error("Errore la creazione del vino");
-    return await res.json();
-  } catch (err) {
-    console.log("Errore -> " + err);
-    return null;
-  }
-};
-
 export const deleteWine = async (wineId) => {
   try {
     const res = await fetch(`${url}/wines/${wineId}`, {
@@ -90,12 +85,29 @@ export const deleteWine = async (wineId) => {
       },
     });
 
-    if (!res.ok) throw new Error("Errore durante l'eliminazione del vino");
+    if (!res.ok) {
+      throw new Error("Errore eliminazione vino");
+    }
 
     return true;
   } catch (err) {
-    console.log("Errore -> " + err);
+    console.error(err);
     return false;
+  }
+};
+
+export const updateWine = async (wineId, wine) => {
+  try {
+    const res = await fetch(`${url}/wines/${wineId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(wine),
+    });
+    if (!res.ok) throw new Error("Errore la creazione del vino");
+    return await res.json();
+  } catch (err) {
+    console.log("Errore -> " + err);
+    return null;
   }
 };
 
@@ -175,5 +187,72 @@ export const deleteFavorite = async (favoriteId) => {
   } catch (err) {
     console.log("Errore:", err);
     return false;
+  }
+};
+
+export const fetchMyOrders = async () => {
+  try {
+    const res = await fetch(`${url}/orders/me`, {
+      headers: getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore caricamento ordini");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+export const becomeSeller = async () => {
+  try {
+    const res = await fetch(`${url}/users/me/become-seller`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Errore nel diventare seller");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log("Errore -> " + err);
+    return null;
+  }
+};
+export const fetchMe = async () => {
+  try {
+    const res = await fetch(`${url}/users/me`, {
+      headers: getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore caricamento utente");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+export const fetchWinesByCategory = async (category) => {
+  try {
+    const res = await fetch(`${url}/wines/category/${category}`);
+
+    if (!res.ok) {
+      throw new Error("Errore caricamento vini per categoria");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log("Errore -> " + err);
+    return null;
   }
 };
