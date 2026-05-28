@@ -1,92 +1,102 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import Button from "react-bootstrap/Button";
-import { Link, useNavigate } from "react-router-dom";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Person, Cart3, Globe, Search } from "react-bootstrap-icons";
+
+import { Link } from "react-router-dom";
 
 function MyNavbar() {
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const handleSearch = (e) => {
+    e.preventDefault();
 
-  const token = localStorage.getItem("token");
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    alert("Logout effettuato");
-    navigate("/login");
+    navigate(`/wines?search=${search}`);
   };
-
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand as={Link} to="/">
-          WineHub
-        </Navbar.Brand>
+    <>
+      <Navbar expand="lg" className="wine-navbar py-3">
+        <Container fluid className="px-5">
+          {/* LOGO */}
+          <Navbar.Brand as={Link} to="/" className="wine-logo">
+            WineHub
+          </Navbar.Brand>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          {/* SEARCH BAR */}
+          <div className="search-container">
+            <form onSubmit={handleSearch}>
+              <InputGroup>
+                <Form.Control
+                  placeholder="Descrivi cosa stai cercando"
+                  className="search-input"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
 
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">
-              Home
+                <button type="submit" className="search-icon">
+                  <Search />
+                </button>
+              </InputGroup>
+            </form>
+          </div>
+
+          {/* ICONS */}
+          <div className="d-flex align-items-center gap-4">
+            <div className="d-flex align-items-center gap-1">
+              <span>IT</span>
+              <Globe size={20} />
+            </div>
+
+            <Link to="/profile" className="nav-icon">
+              <Person size={26} />
+            </Link>
+
+            <Link to="/cart" className="nav-icon">
+              <Cart3 size={26} />
+            </Link>
+          </div>
+        </Container>
+      </Navbar>
+
+      {/* MENU SOTTO */}
+      <div className="wine-menu">
+        <Container fluid className="px-5">
+          <Nav className="justify-content-center gap-5">
+            <Nav.Link as={Link} to="/wines?category=WHITE">
+              Bianchi
+            </Nav.Link>
+
+            <Nav.Link as={Link} to="/wines?category=RED">
+              Rossi
+            </Nav.Link>
+
+            <Nav.Link as={Link} to="/wines?category=SPARKLING">
+              Spumanti
             </Nav.Link>
 
             <Nav.Link as={Link} to="/wines">
-              Vini
+              Tutti i vini
             </Nav.Link>
 
-            {token && (
-              <NavDropdown title="Area utente" id="basic-nav-dropdown">
-                <NavDropdown.Item as={Link} to="/profile">
-                  Profilo
-                </NavDropdown.Item>
+            <Nav.Link as={Link} to="/favorites">
+              Preferiti
+            </Nav.Link>
 
-                <NavDropdown.Item as={Link} to="/favorites">
-                  Preferiti
-                </NavDropdown.Item>
+            <Nav.Link as={Link} to="/orders">
+              Ordini
+            </Nav.Link>
 
-                <NavDropdown.Item as={Link} to="/orders">
-                  Ordini
-                </NavDropdown.Item>
-
-                <NavDropdown.Divider />
-
-                <NavDropdown.Item as={Link} to="/my-wines">
-                  I miei vini
-                </NavDropdown.Item>
-
-                <NavDropdown.Item as={Link} to="/create-wine">
-                  Crea vino
-                </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/cart">
-                  Carrello
-                </NavDropdown.Item>
-              </NavDropdown>
-            )}
+            <Nav.Link as={Link} to="/my-wines">
+              I miei vini
+            </Nav.Link>
           </Nav>
-
-          <Nav>
-            {!token && (
-              <>
-                <Nav.Link as={Link} to="/login">
-                  Login
-                </Nav.Link>
-
-                <Nav.Link as={Link} to="/register">
-                  Registrati
-                </Nav.Link>
-              </>
-            )}
-
-            {token && (
-              <Button variant="outline-danger" onClick={handleLogout}>
-                Logout
-              </Button>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+        </Container>
+      </div>
+    </>
   );
 }
 

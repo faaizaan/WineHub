@@ -18,6 +18,7 @@ import WineDetails from "./pages/WineDetails";
 import EditWine from "./pages/EditWine";
 import Cart from "./pages/Cart";
 import { ToastContainer } from "react-toastify";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -100,6 +101,7 @@ function App() {
           }
         />
       </Routes>
+      <Footer />
     </>
   );
 }

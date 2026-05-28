@@ -275,3 +275,23 @@ export const createOrder = async (order) => {
     return null;
   }
 };
+
+export const deleteOrder = async (orderId) => {
+  try {
+    const res = await fetch(`${url}/orders/${orderId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore eliminazione ordine");
+    }
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};

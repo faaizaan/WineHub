@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 import { becomeSeller, fetchMe } from "../services/api";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 function Profile() {
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
-
+  const navigate = useNavigate();
   const loadProfile = async () => {
     const data = await fetchMe();
 
@@ -22,10 +22,10 @@ function Profile() {
     const result = await becomeSeller();
 
     if (result) {
-      setMessage("Ora sei un seller!");
+      toast.success("Ora sei un seller!");
       setUser(result);
     } else {
-      setMessage("Errore durante il cambio ruolo");
+      toast.error("Errore durante il cambio ruolo");
     }
   };
 
@@ -36,12 +36,13 @@ function Profile() {
       </Container>
     );
   }
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   return (
     <Container className="mt-4" style={{ maxWidth: "600px" }}>
       <h1>Profilo</h1>
-
-      {message && <p>{message}</p>}
 
       <Card>
         <Card.Body>
@@ -78,6 +79,11 @@ function Profile() {
               </Button>
             </div>
           )}
+          <div className="mt-3">
+            <Button variant="danger" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
         </Card.Body>
       </Card>
     </Container>

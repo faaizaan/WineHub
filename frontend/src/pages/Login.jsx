@@ -39,32 +39,53 @@ function Login() {
   };
 
   return (
-    <>
-      <h2 className="text-center mt-5">Login</h2>
-      <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Bentornato</h2>
+        <p className="auth-subtitle">Accedi al tuo account WineHub</p>
+
+        {error && <p className="text-danger text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <div>
+            <label className="form-label">Email</label>
+            <input
+              className="form-control auth-input"
+              type="email"
+              placeholder="Inserisci la tua email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label className="form-label">Password</label>
+            <input
+              className="form-control auth-input"
+              type="password"
+              placeholder="Inserisci la password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-          <button type="submit">Login</button>
+          <button type="submit" className="auth-button">
+            Login
+          </button>
+          <p className="text-center mt-4">
+            Non sei ancora registrato?
+            <span
+              className="auth-link"
+              onClick={() => navigate("/register")}
+              style={{ cursor: "pointer" }}>
+              Registrati
+            </span>
+          </p>
         </form>
       </div>
-    </>
+    </div>
   );
 }
 export default Login;

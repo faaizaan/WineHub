@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Container, Card, ListGroup } from "react-bootstrap";
+import { Container, Card, ListGroup, Button } from "react-bootstrap";
 import { fetchMyOrders } from "../services/api";
-
+import { deleteOrder } from "../services/api";
+import { toast } from "react-toastify";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
@@ -19,7 +20,16 @@ function Orders() {
 
     loadOrders();
   }, []);
+  const handleDeleteOrder = async (orderId) => {
+    const ok = await deleteOrder(orderId);
 
+    if (ok) {
+      setOrders(orders.filter((order) => order.orderId !== orderId));
+      toast.success("Ordine annullato");
+    } else {
+      toast.error("Errore annullamento ordine");
+    }
+  };
   return (
     <Container className="mt-4">
       <h1>I miei ordini</h1>
@@ -31,7 +41,7 @@ function Orders() {
       )}
 
       {orders.map((order) => (
-        <Card className="mb-3" key={order.id}>
+        <Card className="mb-3" key={order.orderId}>
           <Card.Header>Ordine del {order.orderDate}</Card.Header>
 
           <Card.Body>
@@ -68,6 +78,11 @@ function Orders() {
               ))}
             </ListGroup>
           </Card.Body>
+          <Button
+            variant="danger"
+            onClick={() => handleDeleteOrder(order.orderId)}>
+            Annulla ordine
+          </Button>
         </Card>
       ))}
     </Container>

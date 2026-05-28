@@ -1,41 +1,24 @@
 import { useEffect, useState } from "react";
 import { fetchWines, fetchWinesByCategory } from "../services/api";
-import { Container, Row, Col, Card, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Link, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Wines() {
   const [wines, setWines] = useState([]);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const loadWines = async () => {
-    setLoading(true);
+  const [searchParams] = useSearchParams();
 
-    try {
-      const data = await fetchWines();
-
-      if (data) {
-        setWines(data.content);
-      } else {
-        setError("Errore nel caricamento dei vini");
-      }
-    } catch (error) {
-      setError("Errore nel caricamento dei vini");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const category = searchParams.get("category") || "";
+  const searchFromUrl = searchParams.get("search") || "";
 
   useEffect(() => {
-    loadWines();
-  }, []);
+    const loadWines = async () => {
+      setLoading(true);
+      setError("");
 
-  const handleCategoryChange = async (category) => {
-    setError("");
-    setLoading(true);
-
-    try {
       let data;
 
       if (category === "") {
@@ -49,16 +32,43 @@ function Wines() {
       } else {
         setError("Errore nel caricamento dei vini");
       }
-    } catch (error) {
-      setError("Errore nel caricamento dei vini");
-    } finally {
+
       setLoading(false);
+    };
+
+    loadWines();
+  }, [category]);
+
+  const handleAddToCart = (wine) => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const existingWine = cart.find((item) => item.wineId === wine.id);
+
+    if (existingWine) {
+      existingWine.quantity += 1;
+    } else {
+      cart.push({
+        wineId: wine.id,
+        wineName: wine.name,
+        imageUrl: wine.imageUrl,
+        price: wine.price,
+        quantity: 1,
+      });
     }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    toast.success("Vino aggiunto al carrello");
   };
 
-  const filteredWines = wines.filter((wine) =>
-    wine.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredWines = wines.filter((wine) => {
+    const searchLower = searchFromUrl.toLowerCase();
+
+    return (
+      wine.name.toLowerCase().includes(searchLower) ||
+      wine.description.toLowerCase().includes(searchLower)
+    );
+  });
 
   if (loading) {
     return (
@@ -72,24 +82,6 @@ function Wines() {
     <Container className="mt-4">
       <h1>Vini</h1>
 
-      <Form.Control
-        type="text"
-        placeholder="Cerca vino..."
-        className="mb-3"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <Form.Select
-        className="mb-4"
-        onChange={(e) => handleCategoryChange(e.target.value)}>
-        <option value="">Tutti</option>
-        <option value="RED">Rossi</option>
-        <option value="WHITE">Bianchi</option>
-        <option value="ROSE">Rosé</option>
-        <option value="SPARKLING">Spumanti</option>
-      </Form.Select>
-
       {error && <p className="text-danger">{error}</p>}
 
       {filteredWines.length === 0 && !error && <p>Nessun vino trovato.</p>}
@@ -102,14 +94,26 @@ function Wines() {
 
               <Card.Body>
                 <Card.Title>{wine.name}</Card.Title>
+
                 <Card.Text>{wine.description}</Card.Text>
+
                 <p>{wine.price} €</p>
+
                 <p>{wine.wineCategory}</p>
+
                 <p>{wine.sellerUsername}</p>
 
-                <Link to={`/wines/${wine.id}`} className="btn btn-primary">
-                  Dettagli
-                </Link>
+                <div className="d-flex flex-column flex-md-row gap-2">
+                  <Link to={`/wines/${wine.id}`} className="btn btn-primary">
+                    Dettagli
+                  </Link>
+
+                  <Button
+                    variant="success"
+                    onClick={() => handleAddToCart(wine)}>
+                    Aggiungi al carrello
+                  </Button>
+                </div>
               </Card.Body>
             </Card>
           </Col>

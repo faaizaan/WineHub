@@ -44,59 +44,97 @@ function Register() {
   };
 
   return (
-    <>
-      <h2 className="text-center mt-5">Registrazione</h2>
+    <div className="auth-page">
+      <div className="auth-card register-card">
+        <h2 className="auth-title">Crea account</h2>
 
-      <div
-        style={{ maxWidth: "400px", margin: "50px auto" }}
-        className="d-flex flex-column">
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        <p className="auth-subtitle">Entra nella community WineHub</p>
+
+        {error && <p className="text-danger text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
+          <div>
+            <label className="form-label">Username</label>
 
-          <input
-            type="text"
-            placeholder="Nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            required
-          />
+            <input
+              className="form-control auth-input"
+              type="text"
+              placeholder="Scegli uno username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Cognome"
-            value={cognome}
-            onChange={(e) => setCognome(e.target.value)}
-            required
-          />
+          <div className="d-flex gap-3">
+            <div className="w-50">
+              <label className="form-label">Nome</label>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+              <input
+                className="form-control auth-input"
+                type="text"
+                placeholder="Nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+            </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+            <div className="w-50">
+              <label className="form-label">Cognome</label>
 
-          <button type="submit">Registrati</button>
+              <input
+                className="form-control auth-input"
+                type="text"
+                placeholder="Cognome"
+                value={cognome}
+                onChange={(e) => setCognome(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="form-label">Email</label>
+
+            <input
+              className="form-control auth-input"
+              type="email"
+              placeholder="Inserisci la tua email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="form-label">Password</label>
+
+            <input
+              className="form-control auth-input"
+              type="password"
+              placeholder="Crea una password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button type="submit" className="auth-button">
+            Registrati
+          </button>
+          <p className="text-center mt-4">
+            sei gia registrato?
+            <span
+              className="auth-link"
+              onClick={() => navigate("/login")}
+              style={{ cursor: "pointer" }}>
+              Login
+            </span>
+          </p>
         </form>
       </div>
-    </>
+    </div>
   );
 }
 export default Register;
