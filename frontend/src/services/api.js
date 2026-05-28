@@ -256,3 +256,22 @@ export const fetchWinesByCategory = async (category) => {
     return null;
   }
 };
+export const createOrder = async (order) => {
+  try {
+    const res = await fetch(`${url}/orders`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(order),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Errore creazione ordine");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.log("Errore -> " + err);
+    return null;
+  }
+};

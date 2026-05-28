@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -34,7 +35,7 @@ function Register() {
         throw new Error(errorData.message || "Errore durante la registrazione");
       }
 
-      alert("registrazione completata");
+      toast.success("registrazione completata");
 
       navigate("/login");
     } catch (error) {

@@ -16,12 +16,14 @@ import MyWines from "./pages/MyWines";
 import CreateWine from "./pages/CreateWine";
 import WineDetails from "./pages/WineDetails";
 import EditWine from "./pages/EditWine";
+import Cart from "./pages/Cart";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <>
       <MyNavbar />
-
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/wines" element={<Wines />} />
@@ -85,6 +87,15 @@ function App() {
               <SellerRoute>
                 <EditWine />
               </SellerRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
             </ProtectedRoute>
           }
         />

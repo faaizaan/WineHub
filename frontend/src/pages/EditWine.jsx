@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Form, Button } from "react-bootstrap";
 import { fetchWineById, updateWine, uploadWineImage } from "../services/api";
+import { toast } from "react-toastify";
 
 function EditWine() {
   const { wineId } = useParams();
@@ -54,7 +55,7 @@ function EditWine() {
       await uploadWineImage(wineId, imageFile);
     }
 
-    alert("Vino modificato");
+    toast.success("Vino modificato");
     navigate("/my-wines");
   };
 

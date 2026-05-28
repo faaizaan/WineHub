@@ -58,6 +58,9 @@ function MyNavbar() {
                 <NavDropdown.Item as={Link} to="/create-wine">
                   Crea vino
                 </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/cart">
+                  Carrello
+                </NavDropdown.Item>
               </NavDropdown>
             )}
           </Nav>

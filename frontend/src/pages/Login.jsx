@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ function Login() {
 
       localStorage.setItem("token", accessToken);
 
-      alert("login completato");
+      toast.success("login completato");
       navigate("/wines");
     } catch (error) {
       setError(error.message);

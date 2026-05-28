@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { fetchMyWines, deleteWine } from "../services/api";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
 function MyWines() {
   const [wines, setWines] = useState([]);
   const [error, setError] = useState("");
@@ -25,9 +27,12 @@ function MyWines() {
 
     if (ok) {
       setWines(wines.filter((wine) => wine.id !== wineId));
+    } else {
+      toast.warning(
+        "Non puoi eliminare questo vino perché è collegato a ordini o preferiti",
+      );
     }
   };
-
   return (
     <Container className="mt-4">
       <h1>I miei vini</h1>

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Container, Card } from "react-bootstrap";
 import { fetchWineById } from "../services/api";
 import { addFavorite } from "../services/api";
+import { toast } from "react-toastify";
 
 function WineDetails() {
   const { wineId } = useParams();
@@ -43,10 +44,31 @@ function WineDetails() {
     const result = await addFavorite(wine.id);
 
     if (result) {
-      alert("Vino aggiunto ai preferiti");
+      toast.success("Vino aggiunto ai preferiti");
     } else {
-      alert("Errore");
+      toast("già aggiunto ai preferiti");
     }
+  };
+
+  const handleAddToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const existingWine = cart.find((item) => item.wineId === wine.id);
+
+    if (existingWine) {
+      existingWine.quantity += 1;
+    } else {
+      cart.push({
+        wineId: wine.id,
+        wineName: wine.name,
+        imageUrl: wine.imageUrl,
+        price: wine.price,
+        quantity: 1,
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    toast.success("Vino aggiunto al carrello");
   };
 
   return (
@@ -60,6 +82,9 @@ function WineDetails() {
           <p>{wine.wineCategory}</p>
           <button className="btn btn-primary" onClick={handleAddFavorite}>
             Aggiungi ai preferiti
+          </button>
+          <button className="btn btn-success ms-2" onClick={handleAddToCart}>
+            Aggiungi al carrello
           </button>
         </Card.Body>
       </Card>

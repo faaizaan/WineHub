@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button } from "react-bootstrap";
 import { createWine, uploadWineImage } from "../services/api";
+import { toast } from "react-toastify";
 
 function CreateWine() {
   const [name, setName] = useState("");
@@ -33,7 +34,7 @@ function CreateWine() {
       await uploadWineImage(createdWine.id, imageFile);
     }
 
-    alert("Vino creato");
+    toast.success("Vino creato");
     navigate("/my-wines");
   };
 
