@@ -4,7 +4,7 @@ import { Container, Card } from "react-bootstrap";
 import { fetchWineById } from "../services/api";
 import { addFavorite } from "../services/api";
 import { toast } from "react-toastify";
-
+import { getCloudinaryImage } from "../services/utils";
 function WineDetails() {
   const { wineId } = useParams();
   const [wine, setWine] = useState(null);
@@ -74,7 +74,10 @@ function WineDetails() {
   return (
     <Container className="mt-4">
       <Card>
-        <Card.Img variant="top" src={wine.imageUrl} />
+        <img
+          src={getCloudinaryImage(wine.imageUrl, 1000, 700)}
+          alt={wine.name}
+        />
         <Card.Body>
           <Card.Title>{wine.name}</Card.Title>
           <Card.Text>{wine.description}</Card.Text>

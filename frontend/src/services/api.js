@@ -86,12 +86,13 @@ export const deleteWine = async (wineId) => {
     });
 
     if (!res.ok) {
-      throw new Error("Errore eliminazione vino");
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Errore eliminazione vino");
     }
 
     return true;
   } catch (err) {
-    console.error(err);
+    console.log(err);
     return false;
   }
 };

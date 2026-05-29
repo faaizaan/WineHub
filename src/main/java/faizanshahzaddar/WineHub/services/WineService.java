@@ -11,6 +11,8 @@ import faizanshahzaddar.WineHub.exceptions.BadRequestException;
 import faizanshahzaddar.WineHub.exceptions.NotFoundException;
 import faizanshahzaddar.WineHub.exceptions.UnauthorizedException;
 import faizanshahzaddar.WineHub.payloads.WineDTO;
+import faizanshahzaddar.WineHub.repositories.FavoriteRepository;
+import faizanshahzaddar.WineHub.repositories.OrderItemRepository;
 import faizanshahzaddar.WineHub.repositories.WineRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,10 +31,13 @@ import java.util.UUID;
 public class WineService {
     private final WineRepository wineRepository;
     private final Cloudinary cloudinaryUploader;
-
-    public WineService(WineRepository wineRepository, Cloudinary cloudinaryUploader) {
+    private final OrderItemRepository orderItemRepository;
+    private final FavoriteRepository favoriteRepository;
+    public WineService(WineRepository wineRepository, Cloudinary cloudinaryUploader, OrderItemRepository orderItemRepository, FavoriteRepository favoriteRepository) {
         this.wineRepository = wineRepository;
         this.cloudinaryUploader = cloudinaryUploader;
+        this.orderItemRepository = orderItemRepository;
+        this.favoriteRepository = favoriteRepository;
     }
 
     public Wine save(WineDTO body, User currentUser){
@@ -60,17 +65,21 @@ public class WineService {
         return this.wineRepository.findAll(pageable);
     }
 
-    public void findByIdAndDelete(UUID wineId, User currentUser) {
+    public void findByIdAndDelete(UUID wineId, User currentAuthenticatedUser) {
         Wine found = this.findById(wineId);
 
-        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
-        boolean isOwner = found.getUser().getId().equals(currentUser.getId());
-
-        if (!isAdmin && !isOwner) {
-            throw new AccessDeniedException("Non puoi eliminare un vino del quale non sei proprietario");
+        if (!found.getUser().getId().equals(currentAuthenticatedUser.getId())
+                && currentAuthenticatedUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedException("Non puoi eliminare questo vino");
         }
 
-        this.wineRepository.delete(found);
+        if (orderItemRepository.existsByWineId(wineId)) {
+            throw new BadRequestException("Non puoi eliminare questo vino perché è collegato a uno o più ordini");
+        }
+
+        favoriteRepository.deleteByWineId(wineId);
+
+        wineRepository.delete(found);
     }
 
     public Wine findByIdAndUpdate(UUID wineId, WineDTO body, User currentUser){

@@ -19,7 +19,7 @@ import EditWine from "./pages/EditWine";
 import Cart from "./pages/Cart";
 import { ToastContainer } from "react-toastify";
 import Footer from "./components/Footer";
-
+import NotFound from "./pages/NotFound";
 function App() {
   return (
     <>
@@ -100,6 +100,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </>

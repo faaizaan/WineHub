@@ -7,6 +7,7 @@ import faizanshahzaddar.WineHub.exceptions.BadRequestException;
 import faizanshahzaddar.WineHub.exceptions.NotFoundException;
 import faizanshahzaddar.WineHub.payloads.UserDTO;
 import faizanshahzaddar.WineHub.repositories.UserRepository;
+import faizanshahzaddar.WineHub.tools.EmailSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,11 +24,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder bcrypt;
+    private final EmailSender emailSender;
 
-
-    public UserService(UserRepository userRepository, PasswordEncoder bcrypt) {
+    public UserService(UserRepository userRepository, PasswordEncoder bcrypt, EmailSender emailSender) {
         this.userRepository = userRepository;
         this.bcrypt = bcrypt;
+        this.emailSender = emailSender;
     }
 
     public User save(UserDTO body){
@@ -39,7 +41,15 @@ public class UserService {
 
         User user = new User(username, email, body.nome(),bcrypt.encode(body.password()), body.cognome());
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        emailSender.sendEmail(
+                savedUser.getEmail(),
+                "Benvenuto su WineHub",
+                "Ciao " + savedUser.getNome() + ", la tua registrazione è andata a buon fine!"
+        );
+
+        return savedUser;
     }
 
     public User findById(UUID userId) {
@@ -98,8 +108,19 @@ public class UserService {
         if (user.getRole() == Role.ADMIN) {
             throw new BadRequestException("Un admin non può diventare seller");
         }
+
         user.setRole(Role.SELLER);
-        return userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+
+        emailSender.sendEmail(
+                savedUser.getEmail(),
+                "Account Seller attivato - WineHub",
+                "Ciao " + savedUser.getNome() +
+                        ", il tuo account è stato aggiornato con successo al ruolo SELLER."
+        );
+
+        return savedUser;
     }
 
     public Page<User> findAll(int page, int size, String sortBy) {

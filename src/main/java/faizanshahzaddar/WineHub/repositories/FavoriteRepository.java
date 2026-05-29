@@ -16,4 +16,5 @@ public interface FavoriteRepository extends JpaRepository<Favorite, UUID> {
     boolean existsByUserAndWine(User user, Wine wine);
 
     Optional<Favorite> findByUserAndWine(User user, Wine wine);
+    void deleteByWineId(UUID wineId);
 }

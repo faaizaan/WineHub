@@ -23,10 +23,18 @@ function MyWines() {
   }, []);
 
   const handleDelete = async (wineId) => {
+    const confirmDelete = window.confirm(
+      "Sei sicuro di voler eliminare questo vino?",
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
     const ok = await deleteWine(wineId);
 
     if (ok) {
       setWines(wines.filter((wine) => wine.id !== wineId));
+      toast.success("Vino eliminato");
     } else {
       toast.warning(
         "Non puoi eliminare questo vino perché è collegato a ordini o preferiti",
@@ -35,7 +43,13 @@ function MyWines() {
   };
   return (
     <Container className="mt-4">
-      <h1>I miei vini</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>I miei vini</h1>
+
+        <Link to="/create-wine" className="btn btn-success">
+          + Crea vino
+        </Link>
+      </div>
 
       {error && <p className="text-danger">{error}</p>}
 

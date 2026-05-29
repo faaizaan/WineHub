@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
-import { fetchWines, fetchWinesByCategory } from "../services/api";
+import {
+  fetchWines,
+  fetchWinesByCategory,
+  fetchMe,
+  deleteWine,
+} from "../services/api";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { getCloudinaryImage } from "../services/utils";
 
 function Wines() {
   const [wines, setWines] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   const [searchParams] = useSearchParams();
 
@@ -36,7 +43,16 @@ function Wines() {
       setLoading(false);
     };
 
+    const loadUser = async () => {
+      const data = await fetchMe();
+
+      if (data) {
+        setUser(data);
+      }
+    };
+
     loadWines();
+    loadUser();
   }, [category]);
 
   const handleAddToCart = (wine) => {
@@ -57,8 +73,27 @@ function Wines() {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-
     toast.success("Vino aggiunto al carrello");
+  };
+
+  const handleDelete = async (wineId) => {
+    const confirmDelete = window.confirm(
+      "Sei sicuro di voler eliminare questo vino?",
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+    const ok = await deleteWine(wineId);
+
+    if (ok) {
+      setWines(wines.filter((wine) => wine.id !== wineId));
+      toast.success("Vino eliminato");
+    } else {
+      toast.warning(
+        "Non puoi eliminare questo vino perché è collegato a ordini o preferiti",
+      );
+    }
   };
 
   const filteredWines = wines.filter((wine) => {
@@ -90,7 +125,10 @@ function Wines() {
         {filteredWines.map((wine) => (
           <Col md={4} className="mb-3" key={wine.id}>
             <Card className="h-100">
-              <Card.Img variant="top" src={wine.imageUrl} />
+              <Card.Img
+                variant="top"
+                src={getCloudinaryImage(wine.imageUrl, 600, 400)}
+              />
 
               <Card.Body>
                 <Card.Title>{wine.name}</Card.Title>
@@ -98,9 +136,7 @@ function Wines() {
                 <Card.Text>{wine.description}</Card.Text>
 
                 <p>{wine.price} €</p>
-
                 <p>{wine.wineCategory}</p>
-
                 <p>{wine.sellerUsername}</p>
 
                 <div className="d-flex flex-column flex-md-row gap-2">
@@ -113,6 +149,14 @@ function Wines() {
                     onClick={() => handleAddToCart(wine)}>
                     Aggiungi al carrello
                   </Button>
+
+                  {user?.role === "ADMIN" && (
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDelete(wine.id)}>
+                      Elimina
+                    </Button>
+                  )}
                 </div>
               </Card.Body>
             </Card>

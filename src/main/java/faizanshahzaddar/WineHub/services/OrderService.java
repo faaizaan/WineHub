@@ -8,6 +8,7 @@ import faizanshahzaddar.WineHub.exceptions.NotFoundException;
 import faizanshahzaddar.WineHub.payloads.OrderDTO;
 import faizanshahzaddar.WineHub.payloads.OrderItemDTO;
 import faizanshahzaddar.WineHub.repositories.OrderRepository;
+import faizanshahzaddar.WineHub.tools.EmailSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,10 +24,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final WineService wineService;
+    private final EmailSender emailSender;
 
-    public OrderService(OrderRepository orderRepository, WineService wineService) {
+    public OrderService(OrderRepository orderRepository, WineService wineService, EmailSender emailSender) {
         this.orderRepository = orderRepository;
         this.wineService = wineService;
+        this.emailSender = emailSender;
     }
 
     public Order save(OrderDTO body, User currentUser) {
@@ -45,7 +48,16 @@ public class OrderService {
             order.getItems().add(orderItem);
         }
 
-        return this.orderRepository.save(order);
+        Order savedOrder = this.orderRepository.save(order);
+
+        emailSender.sendEmail(
+                currentUser.getEmail(),
+                "Ordine confermato - WineHub",
+                "Ciao " + currentUser.getNome() +
+                        ", il tuo ordine è stato creato correttamente. Grazie per aver scelto WineHub!"
+        );
+
+        return savedOrder;
     }
 
     public Order findById(UUID orderId) {
