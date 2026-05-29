@@ -50,12 +50,16 @@ public class OrderService {
 
         Order savedOrder = this.orderRepository.save(order);
 
-        emailSender.sendEmail(
+       try {
+       emailSender.sendEmail(
                 currentUser.getEmail(),
                 "Ordine confermato - WineHub",
                 "Ciao " + currentUser.getNome() +
                         ", il tuo ordine è stato creato correttamente. Grazie per aver scelto WineHub!"
         );
+       }catch (Exception e) {
+           log.warn("Email non inviata: " + e.getMessage());
+       }
 
         return savedOrder;
     }

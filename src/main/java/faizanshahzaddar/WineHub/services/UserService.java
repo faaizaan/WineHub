@@ -43,11 +43,16 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        emailSender.sendEmail(
-                savedUser.getEmail(),
-                "Benvenuto su WineHub",
-                "Ciao " + savedUser.getNome() + ", la tua registrazione è andata a buon fine!"
-        );
+        try {
+            emailSender.sendEmail(
+                    savedUser.getEmail(),
+                    "Benvenuto su WineHub",
+                    "Ciao " + savedUser.getNome() +
+                            ", la tua registrazione è andata a buon fine!"
+            );
+        } catch (Exception e) {
+            log.warn("Email non inviata: " + e.getMessage());
+        }
 
         return savedUser;
     }
@@ -113,12 +118,18 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
+        try{
+
+
         emailSender.sendEmail(
                 savedUser.getEmail(),
                 "Account Seller attivato - WineHub",
                 "Ciao " + savedUser.getNome() +
                         ", il tuo account è stato aggiornato con successo al ruolo SELLER."
         );
+        }catch (Exception e) {
+            log.warn("Email non inviata: " + e.getMessage());
+        }
 
         return savedUser;
     }

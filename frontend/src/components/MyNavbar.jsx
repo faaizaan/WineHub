@@ -4,7 +4,7 @@ import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Person, Cart3, Globe, Search } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
@@ -12,11 +12,13 @@ import { Link } from "react-router-dom";
 function MyNavbar() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const handleSearch = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      navigate(`/wines?search=${search}`);
+    }, 500);
 
-    navigate(`/wines?search=${search}`);
-  };
+    return () => clearTimeout(timeout);
+  }, [search, navigate]);
   return (
     <>
       <Navbar expand="lg" className="wine-navbar py-3">
@@ -28,7 +30,7 @@ function MyNavbar() {
 
           {/* SEARCH BAR */}
           <div className="search-container">
-            <form onSubmit={handleSearch}>
+            <form>
               <InputGroup>
                 <Form.Control
                   placeholder="Descrivi cosa stai cercando"
@@ -37,7 +39,7 @@ function MyNavbar() {
                   onChange={(e) => setSearch(e.target.value)}
                 />
 
-                <button type="submit" className="search-icon">
+                <button type="button" className="search-icon">
                   <Search />
                 </button>
               </InputGroup>
