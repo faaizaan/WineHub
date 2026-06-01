@@ -11,8 +11,14 @@ import { Link } from "react-router-dom";
 
 function MyNavbar() {
   const [search, setSearch] = useState("");
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const cartQuantity = cart.reduce((acc, item) => {
+    return acc + item.quantity;
+  }, 0);
   const navigate = useNavigate();
   useEffect(() => {
+    if (search.trim() === "") return;
     const timeout = setTimeout(() => {
       navigate(`/wines?search=${search}`);
     }, 500);
@@ -23,12 +29,10 @@ function MyNavbar() {
     <>
       <Navbar expand="lg" className="wine-navbar py-3">
         <Container fluid className="px-5">
-          {/* LOGO */}
           <Navbar.Brand as={Link} to="/" className="wine-logo">
             WineHub
           </Navbar.Brand>
 
-          {/* SEARCH BAR */}
           <div className="search-container">
             <form>
               <InputGroup>
@@ -46,7 +50,6 @@ function MyNavbar() {
             </form>
           </div>
 
-          {/* ICONS */}
           <div className="d-flex align-items-center gap-4">
             <div className="d-flex align-items-center gap-1">
               <span>IT</span>
@@ -57,14 +60,17 @@ function MyNavbar() {
               <Person size={26} />
             </Link>
 
-            <Link to="/cart" className="nav-icon">
+            <Link to="/cart" className="nav-icon position-relative">
               <Cart3 size={26} />
+
+              {cartQuantity > 0 && (
+                <span className="cart-badge">{cartQuantity}</span>
+              )}
             </Link>
           </div>
         </Container>
       </Navbar>
 
-      {/* MENU SOTTO */}
       <div className="wine-menu">
         <Container fluid className="px-5">
           <Nav className="justify-content-center gap-5">
