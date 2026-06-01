@@ -10,6 +10,7 @@ import faizanshahzaddar.WineHub.payloads.RewiewRespDTO;
 import faizanshahzaddar.WineHub.repositories.RewiewRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +36,7 @@ public class RewiewService {
         review.setComment(body.comment());
         review.setUser(currentUser);
         review.setWine(wine);
+        review.setCreatedAt(LocalDateTime.now());
 
         Rewiew savedReview = this.rewiewRepository.save(review);
 
@@ -46,7 +48,7 @@ public class RewiewService {
                 savedReview.getWine().getName(),
                 savedReview.getRating(),
                 savedReview.getComment(),
-                savedReview.getGetCreatedAt()
+                savedReview.getCreatedAt()
         );
     }
 
@@ -61,7 +63,7 @@ public class RewiewService {
                         review.getWine().getName(),
                         review.getRating(),
                         review.getComment(),
-                        review.getGetCreatedAt()
+                        review.getCreatedAt()
                 ))
                 .toList();
     }
@@ -76,4 +78,4 @@ public class RewiewService {
 
         this.rewiewRepository.delete(found);
     }
-    }
+}

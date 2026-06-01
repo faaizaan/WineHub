@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/wines/me").authenticated()
                 .requestMatchers(HttpMethod.GET, "/wines/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/rewiews/**").permitAll()
                 .anyRequest().authenticated()
         );
 

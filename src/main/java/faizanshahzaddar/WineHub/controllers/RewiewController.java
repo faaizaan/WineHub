@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/rewiews")
 public class RewiewController {
 
     private final RewiewService rewiewService;
@@ -40,12 +40,12 @@ public class RewiewController {
         return this.rewiewService.findByWine(wineId);
     }
 
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/{rewiewId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void findByIdAndDelete(
-            @PathVariable UUID reviewId,
+            @PathVariable UUID rewiewId,
             @AuthenticationPrincipal User currentUser
     ) {
-        this.rewiewService.findByIdAndDelete(reviewId, currentUser);
+        this.rewiewService.findByIdAndDelete(rewiewId, currentUser);
     }
 }

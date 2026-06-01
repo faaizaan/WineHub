@@ -37,7 +37,7 @@ public class Rewiew {
 
 
     @Column(nullable = false)
-    private LocalDateTime getCreatedAt;
+    private LocalDateTime createdAt;
 
 
 }
