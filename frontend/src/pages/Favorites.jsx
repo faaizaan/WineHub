@@ -22,22 +22,24 @@ function Favorites() {
   }, []);
 
   return (
-    <Container className="mt-4">
-      <h1>I miei preferiti</h1>
+    <Container className="mt-4 mb-5">
+      <h1 className="page-title">I miei preferiti</h1>
 
       {error && <p className="text-danger">{error}</p>}
 
       <Row>
         {favorites.map((favorite) => (
-          <Col md={4} className="mb-3" key={favorite.favoriteId}>
-            <Card className="h-100">
+          <Col xs={12} md={6} xl={4} className="mb-3" key={favorite.favoriteId}>
+            <Card className="wine-card-premium h-100">
               <Card.Img variant="top" src={favorite.imageUrl} />
 
-              <Card.Body>
+              <Card.Body className="d-flex flex-column">
                 <Card.Title>{favorite.wineName}</Card.Title>
-                <p>{favorite.price} €</p>
+
+                <p className="fw-bold fs-5">{favorite.price} €</p>
+
                 <button
-                  className="btn btn-danger"
+                  className="btn btn-outline-danger mt-auto"
                   onClick={async () => {
                     const ok = await deleteFavorite(favorite.favoriteId);
 

@@ -42,11 +42,11 @@ function MyWines() {
     }
   };
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 mb-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>I miei vini</h1>
+        <h1 className="page-title">I miei vini</h1>
 
-        <Link to="/create-wine" className="btn btn-success">
+        <Link to="/create-wine" className="btn winehub-btn">
           + Crea vino
         </Link>
       </div>
@@ -55,24 +55,34 @@ function MyWines() {
 
       <Row>
         {wines.map((wine) => (
-          <Col md={4} className="mb-3" key={wine.id}>
-            <Card className="h-100">
+          <Col xs={12} md={6} xl={4} className="mb-3" key={wine.id}>
+            <Card className="wine-card-premium h-100">
               <Card.Img variant="top" src={wine.imageUrl} />
 
-              <Card.Body>
+              <Card.Body className="d-flex flex-column">
                 <Card.Title>{wine.name}</Card.Title>
-                <Card.Text>{wine.description}</Card.Text>
-                <p>{wine.price} €</p>
+
+                <Card.Text className="text-muted flex-grow-1">
+                  {wine.description}
+                </Card.Text>
+
+                <p className="fw-bold">{wine.price} €</p>
+
                 <p>{wine.wineCategory}</p>
 
-                <Button variant="danger" onClick={() => handleDelete(wine.id)}>
-                  Elimina
-                </Button>
-                <Link
-                  to={`/edit-wine/${wine.id}`}
-                  className="btn btn-primary me-2">
-                  Modifica
-                </Link>
+                <div className="d-flex flex-column gap-2 mt-auto">
+                  <Link
+                    to={`/edit-wine/${wine.id}`}
+                    className="btn winehub-btn">
+                    Modifica
+                  </Link>
+
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleDelete(wine.id)}>
+                    Elimina
+                  </Button>
+                </div>
               </Card.Body>
             </Card>
           </Col>

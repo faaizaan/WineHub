@@ -48,53 +48,49 @@ function Cart() {
   const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
-    <Container className="mt-4">
-      <h1>Carrello</h1>
+    <Container className="mt-4 mb-5">
+      <h1 className="page-title">Carrello</h1>
 
       {cart.length === 0 && <p>Il carrello è vuoto.</p>}
 
       {cart.map((item) => (
-        <Card className="mb-3" key={item.wineId}>
+        <Card className="cart-card mb-3 p-2" key={item.wineId}>
           <Card.Body className="d-flex justify-content-between align-items-center">
             <div>
-              <h5>{item.wineName}</h5>
+              <h5 className="fw-bold">{item.wineName}</h5>
 
-              <div className="d-flex align-items-center gap-2">
+              <div className="d-flex align-items-center gap-2 mb-2">
                 <button
-                  className="btn btn-sm btn-danger"
+                  className="btn btn-sm btn-outline-danger"
                   onClick={() => updateQuantity(item.wineId, -1)}>
                   -
                 </button>
 
-                <span>{item.quantity}</span>
+                <span className="fw-bold">{item.quantity}</span>
 
                 <button
-                  className="btn btn-sm btn-success"
+                  className="btn btn-sm btn-outline-success"
                   onClick={() => updateQuantity(item.wineId, 1)}>
                   +
                 </button>
               </div>
 
-              <p>Prezzo: {item.price} €</p>
+              <p className="mb-0">Prezzo: {item.price} €</p>
             </div>
 
-            <img
-              src={item.imageUrl}
-              alt={item.wineName}
-              style={{ width: "80px", height: "80px", objectFit: "cover" }}
-            />
+            <img className="cart-img" src={item.imageUrl} alt={item.wineName} />
           </Card.Body>
         </Card>
       ))}
 
       {cart.length > 0 && (
-        <>
-          <h3 className="mt-4">Totale: {total.toFixed(2)} €</h3>
+        <div className="cart-card p-4 mt-4">
+          <h3 className="cart-total">Totale: {total.toFixed(2)} €</h3>
 
-          <Button variant="success" onClick={handleCreateOrder}>
+          <Button className="winehub-btn mt-2" onClick={handleCreateOrder}>
             Conferma ordine
           </Button>
-        </>
+        </div>
       )}
     </Container>
   );

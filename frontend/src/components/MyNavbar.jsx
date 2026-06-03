@@ -3,28 +3,52 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Person, Cart3, Globe, Search } from "react-bootstrap-icons";
-
-import { Link } from "react-router-dom";
+import { fetchMe } from "../services/api";
 
 function MyNavbar() {
   const [search, setSearch] = useState("");
+  const [user, setUser] = useState(null);
+
+  const navigate = useNavigate();
+
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
   const cartQuantity = cart.reduce((acc, item) => {
     return acc + item.quantity;
   }, 0);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        const data = await fetchMe();
+
+        if (data) {
+          setUser(data);
+        } else {
+          localStorage.removeItem("token");
+          setUser(null);
+        }
+      }
+    };
+
+    loadUser();
+  }, []);
+
   useEffect(() => {
     if (search.trim() === "") return;
+
     const timeout = setTimeout(() => {
       navigate(`/wines?search=${search}`);
     }, 500);
 
     return () => clearTimeout(timeout);
   }, [search, navigate]);
+
   return (
     <>
       <Navbar expand="lg" className="wine-navbar py-3">
@@ -90,17 +114,23 @@ function MyNavbar() {
               Tutti i vini
             </Nav.Link>
 
-            <Nav.Link as={Link} to="/favorites">
-              Preferiti
-            </Nav.Link>
+            {user && (
+              <>
+                <Nav.Link as={Link} to="/favorites">
+                  Preferiti
+                </Nav.Link>
 
-            <Nav.Link as={Link} to="/orders">
-              Ordini
-            </Nav.Link>
+                <Nav.Link as={Link} to="/orders">
+                  Ordini
+                </Nav.Link>
+              </>
+            )}
 
-            <Nav.Link as={Link} to="/my-wines">
-              I miei vini
-            </Nav.Link>
+            {(user?.role === "SELLER" || user?.role === "ADMIN") && (
+              <Nav.Link as={Link} to="/my-wines">
+                I miei vini
+              </Nav.Link>
+            )}
           </Nav>
         </Container>
       </div>

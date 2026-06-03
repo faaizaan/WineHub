@@ -15,7 +15,6 @@ function Wines() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-
   const [searchParams] = useSearchParams();
 
   const category = searchParams.get("category") || "";
@@ -44,10 +43,20 @@ function Wines() {
     };
 
     const loadUser = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setUser(null);
+        return;
+      }
+
       const data = await fetchMe();
 
       if (data) {
         setUser(data);
+      } else {
+        localStorage.removeItem("token");
+        setUser(null);
       }
     };
 
@@ -56,6 +65,13 @@ function Wines() {
   }, [category]);
 
   const handleAddToCart = (wine) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      toast.warning("Effettua il login per aggiungere al carrello");
+      return;
+    }
+
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const existingWine = cart.find((item) => item.wineId === wine.id);
@@ -123,24 +139,32 @@ function Wines() {
 
       <Row>
         {filteredWines.map((wine) => (
-          <Col md={4} className="mb-3" key={wine.id}>
-            <Card className="h-100">
+          <Col xs={12} md={6} xl={4} className="mb-3" key={wine.id}>
+            <Card className="wine-card-premium h-100">
               <Card.Img
                 variant="top"
                 src={getCloudinaryImage(wine.imageUrl, 600, 400)}
               />
 
-              <Card.Body>
-                <Card.Title>{wine.name}</Card.Title>
+              <Card.Body className="d-flex flex-column">
+                <Card.Title className="fw-bold fs-4 text-dark">
+                  {wine.name}
+                </Card.Title>
 
-                <Card.Text>{wine.description}</Card.Text>
+                <Card.Text className="text-muted flex-grow-1">
+                  {wine.description}
+                </Card.Text>
 
-                <p>{wine.price} €</p>
-                <p>{wine.wineCategory}</p>
-                <p>{wine.sellerUsername}</p>
+                <p className="fw-bold fs-5 mb-1">{wine.price} €</p>
 
-                <div className="d-flex flex-column flex-md-row gap-2">
-                  <Link to={`/wines/${wine.id}`} className="btn btn-primary">
+                <p className="text-secondary mb-1">{wine.wineCategory}</p>
+
+                <p className="small text-muted">
+                  Venditore: {wine.sellerUsername}
+                </p>
+
+                <div className="d-flex flex-column gap-2 mt-auto">
+                  <Link to={`/wines/${wine.id}`} className="btn winehub-btn">
                     Dettagli
                   </Link>
 
@@ -152,7 +176,7 @@ function Wines() {
 
                   {user?.role === "ADMIN" && (
                     <Button
-                      variant="danger"
+                      variant="outline-danger"
                       onClick={() => handleDelete(wine.id)}>
                       Elimina
                     </Button>

@@ -30,7 +30,7 @@ function Login() {
       const { accessToken } = data;
 
       localStorage.setItem("token", accessToken);
-
+      window.location.href = "/wines";
       toast.success("login completato");
       navigate("/wines");
     } catch (error) {

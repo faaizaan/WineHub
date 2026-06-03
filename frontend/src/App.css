@@ -1,7 +1,17 @@
+/* GLOBAL */
+
 body {
   margin: 0;
   padding: 0;
 }
+
+.page-title {
+  color: #2b0f14;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* NAVBAR */
 
 .wine-navbar {
   background-color: #f8f5f2;
@@ -19,6 +29,16 @@ body {
   width: 45%;
 }
 
+.search-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.search-container form {
+  width: 60%;
+}
+
 .search-input {
   border-radius: 12px 0 0 12px;
   border: none;
@@ -33,6 +53,16 @@ body {
   border-radius: 0 12px 12px 0;
   cursor: pointer;
 }
+
+.nav-icon {
+  color: #222;
+}
+
+.nav-icon:hover {
+  color: #8b1e2d;
+}
+
+/* MENU CATEGORIE */
 
 .wine-menu {
   background-color: white;
@@ -49,24 +79,7 @@ body {
   color: #8b1e2d;
 }
 
-.nav-icon {
-  color: #222;
-}
-
-.nav-icon:hover {
-  color: #8b1e2d;
-}
-.search-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.search-container form {
-  width: 60%;
-}
-
-/*HOMEPAGE*/
+/* HOMEPAGE */
 
 .home-hero {
   background:
@@ -91,12 +104,14 @@ body {
 .home-premium {
   background-color: #2b0f14;
 }
+
 .home-features {
   background-color: #faf7f4;
   color: #2b0f14;
 }
 
-/*FOOTER*/
+/* FOOTER */
+
 .footer {
   background-color: #f8f5f2;
   color: #2b0f14;
@@ -125,7 +140,8 @@ body {
   color: #777;
 }
 
-/*logim e register*/
+/* LOGIN E REGISTER */
+
 .auth-page {
   min-height: 75vh;
   display: flex;
@@ -178,6 +194,7 @@ body {
 .register-card {
   max-width: 600px;
 }
+
 .auth-link {
   color: #6b0f1a;
   font-weight: 600;
@@ -188,7 +205,46 @@ body {
   color: #8b1e2d;
 }
 
-/*nav*/
+/* RESPONSIVE TABLET */
+
+@media (min-width: 769px) and (max-width: 994px) {
+  .wine-navbar .container-fluid {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .search-container form {
+    width: 80%;
+  }
+
+  .wine-menu {
+    overflow-x: auto;
+  }
+
+  .wine-menu .nav {
+    justify-content: flex-start !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 30px;
+    scrollbar-width: none;
+  }
+
+  .wine-menu .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wine-menu .nav-link {
+    white-space: nowrap;
+  }
+}
+
+/* RESPONSIVE MOBILE */
+
 @media (max-width: 768px) {
   .wine-navbar .container-fluid {
     flex-direction: column;
@@ -231,21 +287,122 @@ body {
     white-space: nowrap;
     font-size: 0.9rem;
   }
-}
 
-/*pag*/
-.card-img-top {
-  height: 260px;
-  object-fit: cover;
-}
-
-@media (max-width: 768px) {
   .card-img-top {
     height: 220px;
   }
 }
 
-/*cart*/
+/* CARD VINI */
+
+.card-img-top {
+  height: 260px;
+  object-fit: cover;
+}
+
+.wine-card-premium {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  transition: all 0.25s ease;
+}
+
+.wine-card-premium:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+.wine-card-premium .card-img-top {
+  height: 260px;
+  object-fit: cover;
+}
+
+/* DETTAGLIO VINO E RECENSIONI */
+
+.wine-detail-img {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+}
+
+.review-box {
+  border: none;
+  border-radius: 18px;
+  background-color: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+.review-section {
+  background-color: #faf7f4;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+/* BOTTONI */
+
+.winehub-btn {
+  background-color: #6b0f1a;
+  border: none;
+  color: white;
+}
+
+.winehub-btn:hover {
+  background-color: #8b1e2d;
+  color: white;
+}
+
+/* PROFILE */
+
+.profile-card {
+  border: none;
+  border-radius: 18px;
+  background-color: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+.profile-name {
+  color: #6b0f1a;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #f8f5f2;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.profile-info {
+  text-align: left;
+  margin-top: 20px;
+}
+
+/* CARRELLO */
+
+.cart-card {
+  border: none;
+  border-radius: 18px;
+  background-color: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+.cart-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.cart-total {
+  color: #6b0f1a;
+  font-weight: 700;
+}
+
 .cart-badge {
   position: absolute;
   top: -8px;
@@ -255,4 +412,37 @@ body {
   font-size: 0.75rem;
   border-radius: 50%;
   padding: 2px 6px;
+}
+
+/* FORM CREA E MODIFICA VINO */
+
+.form-card {
+  border: none;
+  border-radius: 18px;
+  background-color: white;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+  padding: 28px;
+}
+
+/* ORDERS */
+
+.order-card {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  background-color: #f8f5f2;
+  color: #6b0f1a;
+  font-weight: 700;
+}
+
+/* PAGINA 404 */
+
+.not-found-title {
+  font-size: 6rem;
+  font-weight: 800;
+  color: #6b0f1a;
 }

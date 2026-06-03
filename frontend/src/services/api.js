@@ -296,3 +296,52 @@ export const deleteOrder = async (orderId) => {
     return false;
   }
 };
+export const fetchRewiews = async (wineId) => {
+  try {
+    const response = await fetch(`${url}/rewiews/${wineId}`);
+
+    if (!response.ok) throw new Error("Errore nel recupero recensioni");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+export const createRewiew = async (wineId, rewiew) => {
+  try {
+    const response = await fetch(`${url}/rewiews/${wineId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify(rewiew),
+    });
+
+    if (!response.ok) throw new Error("Errore nella creazione recensione");
+
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+export const deleteRewiew = async (rewiewId) => {
+  try {
+    const res = await fetch(`${url}/rewiews/${rewiewId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new Error("Errore eliminazione recensione");
+    }
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};

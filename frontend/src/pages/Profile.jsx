@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 import { becomeSeller, fetchMe } from "../services/api";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 function Profile() {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
   const loadProfile = async () => {
     const data = await fetchMe();
 
@@ -38,49 +36,66 @@ function Profile() {
   }
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    window.location.href = "/login";
   };
   return (
-    <Container className="mt-4" style={{ maxWidth: "600px" }}>
-      <h1>Profilo</h1>
+    <Container className="mt-4 mb-5" style={{ maxWidth: "650px" }}>
+      <h1 className="page-title">Profilo</h1>
 
-      <Card>
-        <Card.Body>
-          <Card.Title>{user.username}</Card.Title>
-
-          <p>
-            <strong>Email:</strong> {user.email}
-          </p>
-
-          <p>
-            <strong>Nome:</strong> {user.nome}
-          </p>
-
-          <p>
-            <strong>Cognome:</strong> {user.cognome}
-          </p>
-
-          <p>
-            <strong>Ruolo:</strong> {user.role}
-          </p>
-
+      <Card className="profile-card p-3">
+        <Card.Body className="text-center">
           {user.avatar && (
             <img
               src={user.avatar}
               alt={user.username}
-              style={{ width: "120px", borderRadius: "50%" }}
+              style={{
+                width: "120px",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "50%",
+              }}
             />
           )}
+          <Card.Title className="profile-name">{user.username}</Card.Title>
+
+          <div className="profile-info">
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+
+            <p>
+              <strong>Nome:</strong> {user.nome}
+            </p>
+
+            <p>
+              <strong>Cognome:</strong> {user.cognome}
+            </p>
+
+            <p>
+              <strong>Ruolo:</strong> {user.role}
+            </p>
+          </div>
 
           {user.role === "USER" && (
-            <div className="mt-3">
-              <Button variant="warning" onClick={handleBecomeSeller}>
+            <div className="review-section">
+              <h4>Vuoi vendere i tuoi vini su WineHub?</h4>
+              <p>Diventa seller e inizia a creare il tuo catalogo.</p>
+
+              <button className="btn winehub-btn" onClick={handleBecomeSeller}>
                 Diventa seller
-              </Button>
+              </button>
             </div>
           )}
-          <div className="mt-3">
-            <Button variant="danger" onClick={handleLogout}>
+
+          {user.role === "SELLER" && (
+            <div className="alert alert-success mt-4">
+              Sei già un seller. Puoi gestire i tuoi vini dalla sezione “I miei
+              vini”.
+            </div>
+          )}
+
+          <div className="mt-4">
+            <Button variant="outline-danger" onClick={handleLogout}>
               Logout
             </Button>
           </div>

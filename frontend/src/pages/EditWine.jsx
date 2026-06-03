@@ -60,71 +60,75 @@ function EditWine() {
   };
 
   return (
-    <Container className="mt-4" style={{ maxWidth: "600px" }}>
-      <h1>Modifica vino</h1>
+    <Container className="mt-4 mb-5" style={{ maxWidth: "650px" }}>
+      <h1 className="page-title">Modifica vino</h1>
 
-      {error && <p className="text-danger">{error}</p>}
+      <div className="form-card">
+        {error && <p className="text-danger">{error}</p>}
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Nome vino</Form.Label>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Nome vino</Form.Label>
 
-          <Form.Control
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </Form.Group>
+            <Form.Control
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Descrizione</Form.Label>
+          <Form.Group className="mb-3">
+            <Form.Label>Descrizione</Form.Label>
 
-          <Form.Control
-            as="textarea"
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </Form.Group>
+            <Form.Control
+              as="textarea"
+              rows={4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Prezzo</Form.Label>
+          <Form.Group className="mb-3">
+            <Form.Label>Prezzo</Form.Label>
 
-          <Form.Control
-            type="number"
-            step="0.01"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-          />
-        </Form.Group>
+            <Form.Control
+              type="number"
+              step="0.01"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Categoria</Form.Label>
+          <Form.Group className="mb-3">
+            <Form.Label>Categoria</Form.Label>
 
-          <Form.Select
-            value={wineCategory}
-            onChange={(e) => setWineCategory(e.target.value)}>
-            <option value="RED">Rosso</option>
-            <option value="WHITE">Bianco</option>
-            <option value="ROSE">Rosé</option>
-            <option value="SPARKLING">Spumante</option>
-          </Form.Select>
-        </Form.Group>
+            <Form.Select
+              value={wineCategory}
+              onChange={(e) => setWineCategory(e.target.value)}>
+              <option value="RED">Rosso</option>
+              <option value="WHITE">Bianco</option>
+              <option value="ROSE">Rosé</option>
+              <option value="SPARKLING">Spumante</option>
+            </Form.Select>
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Nuova immagine</Form.Label>
+          <Form.Group className="mb-3">
+            <Form.Label>Nuova immagine</Form.Label>
 
-          <Form.Control
-            type="file"
-            onChange={(e) => setImageFile(e.target.files[0])}
-          />
-        </Form.Group>
+            <Form.Control
+              type="file"
+              onChange={(e) => setImageFile(e.target.files[0])}
+            />
+          </Form.Group>
 
-        <Button type="submit">Salva modifiche</Button>
-      </Form>
+          <Button className="winehub-btn" type="submit">
+            Salva modifiche
+          </Button>
+        </Form>
+      </div>
     </Container>
   );
 }
