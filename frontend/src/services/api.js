@@ -61,8 +61,6 @@ export const createWine = async (newWine) => {
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.log("ERRORE BACKEND:", errorData);
-      console.log("ERRORI VALIDAZIONE:", errorData.errors);
       throw new Error(
         errorData.errors?.join(", ") ||
           errorData.message ||
