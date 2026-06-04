@@ -27,12 +27,9 @@ public class EmailSender {
                 .queryString("subject", subject)
                 .queryString("text", text)
                 .asJson();
-        System.out.println("MAILGUN STATUS: " + response.getStatus());
-        System.out.println("MAILGUN BODY: " + response.getBody());
         if (response.getStatus() >= 400) {
             throw new RuntimeException("Errore durante l'invio dell'email");
         }
 
-        System.out.println(response.getBody());
     }
 }

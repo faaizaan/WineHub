@@ -35,9 +35,8 @@ public class SecurityConfig {
         httpSecurity.sessionManagement(sessions -> sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         httpSecurity.formLogin(formLogin -> formLogin.disable());
         httpSecurity.csrf(csrf -> csrf.disable());
-//        httpSecurity.authorizeHttpRequests(req -> req.requestMatchers("/**").permitAll());
 
-        //cosi tutte le richhieste chiedono il token tranne queste
+
         httpSecurity.authorizeHttpRequests(req -> req
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/wines/me").authenticated()
