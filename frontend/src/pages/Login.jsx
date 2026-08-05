@@ -13,7 +13,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const resp = await fetch("http://localhost:1312/auth/login", {
+      const resp = await fetch("https://winehub.onrender.com/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
