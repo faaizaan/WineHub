@@ -5,7 +5,9 @@ import {
   fetchMe,
   deleteWine,
 } from "../services/api";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+
+import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
+
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getCloudinaryImage } from "../services/utils";
@@ -15,53 +17,62 @@ function Wines() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
   const [searchParams] = useSearchParams();
 
   const category = searchParams.get("category") || "";
   const searchFromUrl = searchParams.get("search") || "";
 
   useEffect(() => {
-    const loadWines = async () => {
+    const loadData = async () => {
       setLoading(true);
       setError("");
 
-      let data;
+      try {
+        // Carica i vini
+        const winesPromise =
+          category === "" ? fetchWines() : fetchWinesByCategory(category);
 
-      if (category === "") {
-        data = await fetchWines();
-      } else {
-        data = await fetchWinesByCategory(category);
+        // Carica l'utente solo se esiste un token
+        const token = localStorage.getItem("token");
+
+        const userPromise = token ? fetchMe() : Promise.resolve(null);
+
+        // Le due richieste partono contemporaneamente
+        const [winesData, userData] = await Promise.all([
+          winesPromise,
+          userPromise,
+        ]);
+
+        // Gestione vini
+        if (winesData) {
+          setWines(winesData.content || []);
+        } else {
+          setWines([]);
+          setError("Errore nel caricamento dei vini.");
+        }
+
+        // Gestione utente
+        if (token) {
+          if (userData) {
+            setUser(userData);
+          } else {
+            localStorage.removeItem("token");
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Errore caricamento:", err);
+        setError("Impossibile caricare i vini. Riprova.");
+        setWines([]);
+      } finally {
+        setLoading(false);
       }
-
-      if (data) {
-        setWines(data.content);
-      } else {
-        setError("Errore nel caricamento dei vini");
-      }
-
-      setLoading(false);
     };
 
-    const loadUser = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setUser(null);
-        return;
-      }
-
-      const data = await fetchMe();
-
-      if (data) {
-        setUser(data);
-      } else {
-        localStorage.removeItem("token");
-        setUser(null);
-      }
-    };
-
-    loadWines();
-    loadUser();
+    loadData();
   }, [category]);
 
   const handleAddToCart = (wine) => {
@@ -89,6 +100,7 @@ function Wines() {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
+
     toast.success("Vino aggiunto al carrello");
   };
 
@@ -100,10 +112,14 @@ function Wines() {
     if (!confirmDelete) {
       return;
     }
+
     const ok = await deleteWine(wineId);
 
     if (ok) {
-      setWines(wines.filter((wine) => wine.id !== wineId));
+      setWines((currentWines) =>
+        currentWines.filter((wine) => wine.id !== wineId),
+      );
+
       toast.success("Vino eliminato");
     } else {
       toast.warning(
@@ -113,29 +129,52 @@ function Wines() {
   };
 
   const filteredWines = wines.filter((wine) => {
-    const searchLower = searchFromUrl.toLowerCase();
+    const searchLower = searchFromUrl.toLowerCase().trim();
 
     return (
-      wine.name.toLowerCase().includes(searchLower) ||
-      wine.description.toLowerCase().includes(searchLower)
+      wine.name?.toLowerCase().includes(searchLower) ||
+      wine.description?.toLowerCase().includes(searchLower)
     );
   });
 
+  // =========================
+  // LOADING
+  // =========================
+
   if (loading) {
     return (
-      <Container className="mt-4">
-        <h3>Caricamento vini...</h3>
+      <Container
+        className="d-flex flex-column justify-content-center align-items-center"
+        style={{ minHeight: "60vh" }}>
+        <Spinner
+          animation="border"
+          role="status"
+          style={{ width: "3rem", height: "3rem" }}>
+          <span className="visually-hidden">Caricamento...</span>
+        </Spinner>
+
+        <h4 className="mt-4">Caricamento vini...</h4>
+
+        <p className="text-muted">
+          Il server potrebbe essere in avvio, attendi qualche secondo.
+        </p>
       </Container>
     );
   }
+
+  // =========================
+  // PAGINA
+  // =========================
 
   return (
     <Container className="mt-4">
       <h1>Vini</h1>
 
-      {error && <p className="text-danger">{error}</p>}
+      {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-      {filteredWines.length === 0 && !error && <p>Nessun vino trovato.</p>}
+      {!error && filteredWines.length === 0 && (
+        <p className="text-muted mt-4">Nessun vino trovato.</p>
+      )}
 
       <Row>
         {filteredWines.map((wine) => (
@@ -145,6 +184,7 @@ function Wines() {
                 loading="lazy"
                 variant="top"
                 src={getCloudinaryImage(wine.imageUrl, 600, 400)}
+                alt={wine.name}
               />
 
               <Card.Body className="d-flex flex-column">
