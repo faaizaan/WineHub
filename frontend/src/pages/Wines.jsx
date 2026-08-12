@@ -142,6 +142,7 @@ function Wines() {
           <Col xs={12} md={6} xl={4} className="mb-3" key={wine.id}>
             <Card className="wine-card-premium h-100">
               <Card.Img
+                loading="lazy"
                 variant="top"
                 src={getCloudinaryImage(wine.imageUrl, 600, 400)}
               />
