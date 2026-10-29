@@ -28,10 +28,18 @@ function Login() {
       }
 
       const { accessToken } = data;
+      console.log("Risposta login:", data);
+      console.log("Token ricevuto:", accessToken);
+
+      if (!accessToken) {
+        throw new Error("Il server non ha restituito accessToken");
+      }
 
       localStorage.setItem("token", accessToken);
-      window.location.href = "/wines";
-      toast.success("login completato");
+
+      console.log("Token salvato:", localStorage.getItem("token"));
+
+      toast.success("Login completato");
       navigate("/wines");
     } catch (error) {
       setError(error.message);
